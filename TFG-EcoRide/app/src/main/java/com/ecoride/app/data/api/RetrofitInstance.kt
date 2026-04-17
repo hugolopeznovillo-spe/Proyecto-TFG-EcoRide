@@ -2,17 +2,12 @@ package com.ecoride.app.data.api
 
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
-// 10.0.2.2 = localhost del ordenador desde el emulador Android
-private const val BASE_URL = "http://10.0.2.2:5000/"
-
-/**
- * Interceptor que añade el JWT token a cada petición autenticada.
- * El token se actualiza mediante [setToken].
- */
 class AuthInterceptor : Interceptor {
     private var token: String? = null
 
@@ -20,18 +15,23 @@ class AuthInterceptor : Interceptor {
         token = newToken
     }
 
-    override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
+    override fun intercept(chain: Interceptor.Chain): Response {
         val original = chain.request()
-        val request = token?.let {
-            original.newBuilder()
-                .addHeader("Authorization", "Bearer $it")
-                .build()
-        } ?: original
-        return chain.proceed(request)
+        val requestBuilder = original.newBuilder()
+
+        token?.let {
+            if (it.isNotEmpty()) {
+                requestBuilder.addHeader("Authorization", "Bearer $it")
+            }
+        }
+
+        return chain.proceed(requestBuilder.build())
     }
 }
 
 object RetrofitInstance {
+    // Para dispositivo físico con 'adb reverse tcp:5000 tcp:5000' o emulador
+    private const val BASE_URL = "http://127.0.0.1:5000/"
 
     val authInterceptor = AuthInterceptor()
 
@@ -42,6 +42,9 @@ object RetrofitInstance {
     private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor(authInterceptor)
         .addInterceptor(loggingInterceptor)
+        .connectTimeout(15, TimeUnit.SECONDS)
+        .readTimeout(15, TimeUnit.SECONDS)
+        .writeTimeout(15, TimeUnit.SECONDS)
         .build()
 
     val api: ApiService by lazy {

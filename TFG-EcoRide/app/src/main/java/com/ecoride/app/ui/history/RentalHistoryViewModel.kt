@@ -32,4 +32,11 @@ class RentalHistoryViewModel(private val rentalRepository: RentalRepository) : V
                 .onFailure { _uiState.value = HistoryUiState.Error(it.message ?: "Error") }
         }
     }
+
+    fun endRental(rentalId: String) {
+        viewModelScope.launch {
+            rentalRepository.endRental(rentalId)
+                .onSuccess { loadHistory() }
+        }
+    }
 }

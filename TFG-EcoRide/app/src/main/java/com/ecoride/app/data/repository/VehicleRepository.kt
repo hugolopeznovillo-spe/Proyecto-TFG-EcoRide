@@ -24,7 +24,8 @@ class VehicleRepository(private val vehicleDao: VehicleDao) {
             runCatching {
                 val response = api.getVehicles()
                 if (response.isSuccessful) {
-                    val entities = response.body()!!.map { it.toEntity() }
+                    val vehicles = response.body()?.vehicles ?: emptyList()
+                    val entities = vehicles.map { it.toEntity() }
                     vehicleDao.upsertAll(entities)
                 } else {
                     error("Error ${response.code()}: ${response.errorBody()?.string()}")
@@ -36,8 +37,11 @@ class VehicleRepository(private val vehicleDao: VehicleDao) {
         withContext(Dispatchers.IO) {
             runCatching {
                 val response = api.getVehicleById(id)
-                if (response.isSuccessful) response.body()!!
-                else error("Error ${response.code()}: ${response.errorBody()?.string()}")
+                if (response.isSuccessful) {
+                    response.body()?.vehicle ?: error("Vehículo no encontrado en la respuesta")
+                } else {
+                    error("Error ${response.code()}: ${response.errorBody()?.string()}")
+                }
             }
         }
 }

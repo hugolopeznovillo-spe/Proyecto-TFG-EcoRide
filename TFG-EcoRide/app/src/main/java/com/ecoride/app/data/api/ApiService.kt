@@ -6,26 +6,17 @@ import retrofit2.http.*
 
 interface ApiService {
 
-    // ── Auth ──────────────────────────────────────────────────────────────────
-
     @POST("auth/login")
     suspend fun login(@Body request: LoginRequest): Response<LoginResponse>
 
     @POST("auth/register")
-    suspend fun register(@Body request: RegisterRequest): Response<ApiMessage>
-
-    @GET("users/me")
-    suspend fun getMyProfile(): Response<UserProfile>
-
-    // ── Vehicles ──────────────────────────────────────────────────────────────
+    suspend fun register(@Body request: RegisterRequest): Response<RegisterResponse>
 
     @GET("vehicles")
-    suspend fun getVehicles(): Response<List<VehicleDto>>
+    suspend fun getVehicles(): Response<VehicleListResponse>
 
     @GET("vehicles/{id}")
-    suspend fun getVehicleById(@Path("id") id: String): Response<VehicleDto>
-
-    // ── Rentals ───────────────────────────────────────────────────────────────
+    suspend fun getVehicleById(@Path("id") id: String): Response<VehicleDetailResponse>
 
     @POST("rentals/start")
     suspend fun startRental(@Body request: StartRentalRequest): Response<StartRentalResponse>
@@ -37,5 +28,5 @@ interface ApiService {
     suspend fun getActiveRental(): Response<RentalDto>
 
     @GET("rentals/my-history")
-    suspend fun getMyHistory(): Response<List<RentalDto>>
+    suspend fun getMyHistory(): Response<RentalHistoryResponse>
 }

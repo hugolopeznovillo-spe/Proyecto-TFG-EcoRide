@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -27,8 +28,15 @@ fun VehicleListScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("🛴 EcoRide") },
-                subtitle = { Text("Hola, ${uiState.username}") },
+                title = {
+                    Column {
+                        Text("🛴 EcoRide")
+                        Text(
+                            text = "Hola, ${uiState.username}",
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                },
                 actions = {
                     IconButton(onClick = onHistoryClick) {
                         Icon(Icons.Default.History, "Historial")
@@ -37,7 +45,7 @@ fun VehicleListScreen(
                         viewModel.logout()
                         onLogout()
                     }) {
-                        Icon(Icons.Default.Logout, "Cerrar sesión")
+                        Icon(Icons.AutoMirrored.Filled.Logout, "Cerrar sesión")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(

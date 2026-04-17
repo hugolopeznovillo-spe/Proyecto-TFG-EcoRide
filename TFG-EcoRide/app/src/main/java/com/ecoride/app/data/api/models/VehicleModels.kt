@@ -11,3 +11,13 @@ data class VehicleDto(
     val status: String,            // "disponible" | "en_uso" | "mantenimiento"
     @SerializedName("created_at")   val createdAt: String? = null
 )
+
+data class VehicleListResponse(
+    val ok: Boolean,
+    val vehicles: List<VehicleDto>
+)
+
+data class VehicleDetailResponse(
+    val ok: Boolean,
+    val vehicle: VehicleDto
+)

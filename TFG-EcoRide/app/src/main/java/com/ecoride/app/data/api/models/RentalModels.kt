@@ -24,3 +24,8 @@ data class StartRentalResponse(
     val message: String,
     @SerializedName("rental_id") val rentalId: String
 )
+
+data class RentalHistoryResponse(
+    val ok: Boolean,
+    val rentals: List<RentalDto>
+)

@@ -44,8 +44,11 @@ class RentalRepository {
         withContext(Dispatchers.IO) {
             runCatching {
                 val response = api.getMyHistory()
-                if (response.isSuccessful) response.body()!!
-                else error("Error ${response.code()}: ${response.errorBody()?.string()}")
+                if (response.isSuccessful) {
+                    response.body()?.rentals ?: emptyList()
+                } else {
+                    error("Error ${response.code()}: ${response.errorBody()?.string()}")
+                }
             }
         }
 }
